@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/admin")
 @PreAuthorize("hasRole('admin')")
+@CrossOrigin(origins = "https://localhost:4200/")
 public class AdminController {
     @Autowired
     private UserService userService;

@@ -3,13 +3,11 @@ package com.example.YAPO.controlers;
 import com.example.YAPO.models.User;
 import com.example.YAPO.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin(origins = "https://localhost:4200/")
 public class UserController {
     @Autowired
     private UserService userService;
