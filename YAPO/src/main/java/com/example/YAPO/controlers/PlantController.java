@@ -31,13 +31,7 @@ public class PlantController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePlantByIdPage(@PathVariable String id) {
         plantRepo.deleteById(Integer.valueOf(id));
-        if (plantRepo.existsById(Integer.valueOf(id))) {
-            return ResponseEntity.notFound().build();
-        } else {
-            return ResponseEntity.ok().build();
-        }
-
-
+        return (plantRepo.existsById(Integer.valueOf(id))) ? ResponseEntity.notFound().build() : ResponseEntity.ok().build();
     }
 
     @PostMapping("create-plant")
