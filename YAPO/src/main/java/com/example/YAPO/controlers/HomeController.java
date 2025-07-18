@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "https://localhost:4200/")
 public class HomeController {
     @GetMapping("/")
-    public String sayHello() {
+    public String homePage() {
         return "Hello World";
     }
 }
