@@ -49,8 +49,6 @@ public class PlantController {
 
     @PostMapping("/create-plant")
     public Plant createPlant(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Plant plant) throws NoSuchElementException{
-        Localization localization = localizationRepo.findById(plant.getLocalization().getId()).get();
-
-        return plantService.createPlant(plant, (User) userDetails, localization);
+        return plantService.createPlant(plant, (User) userDetails);
     }
 }
