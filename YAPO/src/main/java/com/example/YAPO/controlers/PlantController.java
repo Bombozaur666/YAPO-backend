@@ -1,9 +1,7 @@
 package com.example.YAPO.controlers;
 
 import com.example.YAPO.models.Plant;
-import com.example.YAPO.models.Localization;
 import com.example.YAPO.models.User;
-import com.example.YAPO.repositories.LocalizationRepo;
 import com.example.YAPO.service.PlantService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,12 +15,10 @@ import java.util.NoSuchElementException;
 @CrossOrigin(origins = "https://localhost:4200/")
 @RequestMapping("/plants")
 public class PlantController {
-    private final LocalizationRepo localizationRepo;
 
     private final PlantService plantService;
 
-    public PlantController(LocalizationRepo localizationRepo, PlantService plantService) {
-        this.localizationRepo = localizationRepo;
+    public PlantController(PlantService plantService) {
         this.plantService = plantService;
     }
 
