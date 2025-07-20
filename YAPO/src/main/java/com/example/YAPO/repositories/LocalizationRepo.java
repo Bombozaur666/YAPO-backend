@@ -11,4 +11,6 @@ public interface LocalizationRepo extends JpaRepository<Localization, Long> {
     List<Localization> findByUser_Username(String username);
 
     Localization findByIdAndUser_Username(Long Id,String userUsername);
+
+    void deleteByIdAndUser_Username(long id, String username);
 }

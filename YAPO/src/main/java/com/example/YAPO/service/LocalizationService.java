@@ -33,4 +33,13 @@ public class LocalizationService {
         _localization.setName(localization.getName());
         return localizationRepo.save(_localization);
     }
+
+    public boolean deleteByIdAndUsername(long id, String username) {
+        localizationRepo.deleteByIdAndUser_Username(id, username);
+        return checkIfLocalizationExist(id);
+    }
+
+    private boolean checkIfLocalizationExist(long id) {
+        return localizationRepo.existsById(id);
+    }
 }

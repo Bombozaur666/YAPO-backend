@@ -2,7 +2,6 @@ package com.example.YAPO.controlers;
 
 import com.example.YAPO.models.Localization;
 import com.example.YAPO.models.User;
-import com.example.YAPO.repositories.LocalizationRepo;
 import com.example.YAPO.service.LocalizationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,11 +14,9 @@ import java.util.List;
 @CrossOrigin(origins = "https://localhost:4200/")
 @RequestMapping("/rooms")
 public class LocalizationController {
-    private final LocalizationRepo localizationRepo;
     private final LocalizationService localizationService;
 
-    public LocalizationController(LocalizationRepo localizationRepo,  LocalizationService localizationService) {
-        this.localizationRepo = localizationRepo;
+    public LocalizationController(LocalizationService localizationService) {
         this.localizationService = localizationService;
     }
 
@@ -44,8 +41,7 @@ public class LocalizationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteLocalization(@PathVariable long id) {
-        localizationRepo.deleteById(id);
-        return (localizationRepo.existsById(id)) ? ResponseEntity.notFound().build() : ResponseEntity.ok().build();
+    public ResponseEntity<Object> deleteLocalization( @AuthenticationPrincipal UserDetails userDetails, @PathVariable long id) {
+        return (localizationService.deleteByIdAndUsername(id, userDetails.getUsername())) ? ResponseEntity.notFound().build() : ResponseEntity.ok().build();
     }
 }
