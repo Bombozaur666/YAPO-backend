@@ -19,6 +19,6 @@ public class Plant {
     private User user;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "room_id", nullable = false)
-    private Room room;
+    @JoinColumn(name = "localization_id", nullable = false)
+    private Localization localization;
 }

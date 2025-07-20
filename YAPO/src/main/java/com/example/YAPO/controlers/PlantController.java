@@ -1,73 +1,56 @@
 package com.example.YAPO.controlers;
 
 import com.example.YAPO.models.Plant;
-import com.example.YAPO.models.Room;
+import com.example.YAPO.models.Localization;
 import com.example.YAPO.models.User;
-import com.example.YAPO.repositories.PlantRepo;
-import com.example.YAPO.repositories.RoomRepo;
-import com.example.YAPO.repositories.UserRepo;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.YAPO.repositories.LocalizationRepo;
+import com.example.YAPO.service.PlantService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @RestController
 @CrossOrigin(origins = "https://localhost:4200/")
 @RequestMapping("/plants")
 public class PlantController {
-    private final PlantRepo plantRepo;
-    private final RoomRepo roomRepo;
-    private final UserRepo userRepo;
+    private final LocalizationRepo localizationRepo;
 
-    public PlantController(PlantRepo plantRepo, RoomRepo roomRepo, UserRepo userRepo) {
-        this.plantRepo = plantRepo;
-        this.roomRepo = roomRepo;
-        this.userRepo = userRepo;
+    private final PlantService plantService;
+
+    public PlantController(LocalizationRepo localizationRepo, PlantService plantService) {
+        this.localizationRepo = localizationRepo;
+        this.plantService = plantService;
     }
 
     @GetMapping("/")
-    public List<Plant> plantsPage() {
-        return plantRepo.findAll();
+    public List<Plant> plantsPage(@AuthenticationPrincipal UserDetails userDetails) {
+        return plantService.getAllPlants(userDetails.getUsername());
+    }
+
+    @PutMapping("/")
+    public Plant updatePlantByIdPage(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Plant plant) {
+        return plantService.updatePlant(plant, userDetails.getUsername());
     }
 
     @GetMapping("/{id}")
-    public Optional<Plant> getPlantByIdPage(@PathVariable int id) {
-        return plantRepo.findById(id);
+    public Plant getPlantPage(@AuthenticationPrincipal UserDetails userDetails, @PathVariable long id) {
+        return plantService.getPlant(id, userDetails.getUsername());
     }
-
-    @PutMapping("/{id}")
-    public Optional<Plant> updatePlantByIdPage(@PathVariable int id) {
-        return plantRepo.findById(id);
-    }
-
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePlantByIdPage(@PathVariable int id) {
-        plantRepo.deleteById(id);
-        return (plantRepo.existsById(id)) ? ResponseEntity.notFound().build() : ResponseEntity.ok().build();
+    public ResponseEntity<Object> deletePlantByIdPage(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id) {
+        plantService.deletePlant(id, userDetails.getUsername());
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/create-plant")
-    public Plant createPlant(HttpServletRequest request, @RequestBody Plant plant) {
-        Principal principal = request.getUserPrincipal();
-        User user = userRepo.findByUsername(principal.getName());
-        plant.setUser(user);
+    public Plant createPlant(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Plant plant) throws NoSuchElementException{
+        Localization localization = localizationRepo.findById(plant.getLocalization().getId()).get();
 
-        Room room = roomRepo.findById(plant.getRoom().getId()).get();
-        plant.setRoom(room);
-        plantRepo.save(plant);
-
-        return plant;
-    }
-    @PutMapping("/{plantId}/{roomId}")
-    public Plant updatePlant(@PathVariable int plantId,@PathVariable int roomId){
-        Plant plant = plantRepo.findById(plantId).get();
-        Room room = roomRepo.findById(roomId).get();
-        plant.setRoom(room);
-        plantRepo.save(plant);
-        return plant;
+        return plantService.createPlant(plant, (User) userDetails, localization);
     }
 }

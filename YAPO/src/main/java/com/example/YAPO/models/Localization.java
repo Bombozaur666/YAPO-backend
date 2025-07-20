@@ -5,11 +5,11 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "rooms")
-public class Room {
+@Table(name = "localizations")
+public class Localization {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
-    private int id;
+    private long id;
 
     @Column(nullable = false)
     private String name;
