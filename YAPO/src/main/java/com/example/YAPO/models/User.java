@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 
 @Entity
 @Data
@@ -26,4 +28,13 @@ public class User {
 
     @Column()
     private String roles = "user";
+
+    @Column()
+    private Date registrationDate = new Date();
+
+    @Column()
+    private boolean locked = false;
+
+    @Column()
+    private boolean enabled = true;
 }
