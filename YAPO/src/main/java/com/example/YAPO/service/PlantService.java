@@ -3,7 +3,6 @@ package com.example.YAPO.service;
 import com.example.YAPO.models.*;
 import com.example.YAPO.repositories.LocalizationRepo;
 import com.example.YAPO.repositories.PlantRepo;
-import com.example.YAPO.repositories.PlantUpdateRepo;
 import com.example.YAPO.utility.ValueConverter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
