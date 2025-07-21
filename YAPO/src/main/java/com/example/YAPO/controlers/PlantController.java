@@ -1,6 +1,7 @@
 package com.example.YAPO.controlers;
 
 import com.example.YAPO.models.Plant;
+import com.example.YAPO.models.UpdateField;
 import com.example.YAPO.models.User;
 import com.example.YAPO.service.PlantService;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +28,9 @@ public class PlantController {
         return plantService.getAllPlants(userDetails.getUsername());
     }
 
-    @PutMapping("/")
-    public Plant updatePlantByIdPage(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Plant plant) {
-        return plantService.updatePlant(plant, userDetails.getUsername());
+    @PostMapping("/create-plant")
+    public Plant createPlant(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Plant plant) throws NoSuchElementException{
+        return plantService.createPlant(plant, (User) userDetails);
     }
 
     @GetMapping("/{id}")
@@ -43,8 +44,9 @@ public class PlantController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/create-plant")
-    public Plant createPlant(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Plant plant) throws NoSuchElementException{
-        return plantService.createPlant(plant, (User) userDetails);
+    @PatchMapping("/{id}/update")
+    public  ResponseEntity<Object> updateField(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id, @RequestBody UpdateField updateField) {
+        return plantService.updateField(id, (User) userDetails, updateField);
     }
+
 }
