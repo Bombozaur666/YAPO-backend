@@ -17,6 +17,12 @@ public class ValueConverter {
         if (targetType == Double.class || targetType == double.class) return Double.parseDouble(value);
         if (targetType == LocalDate.class) return LocalDate.parse(value, DATE_FORMAT);
         if (targetType == LocalDateTime.class) return LocalDateTime.parse(value, DATETIME_FORMAT);
+        if (targetType.isEnum()) {
+                @SuppressWarnings("unchecked")
+                Class<? extends Enum> enumType = (Class<? extends Enum>) targetType;
+                return Enum.valueOf(enumType, value.toUpperCase());
+        }
+
 
         throw new IllegalArgumentException("Wrong Type: " + targetType.getSimpleName());
     }

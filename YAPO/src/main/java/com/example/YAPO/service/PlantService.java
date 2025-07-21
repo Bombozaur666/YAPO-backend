@@ -1,11 +1,9 @@
 package com.example.YAPO.service;
 
-import com.example.YAPO.models.Plant;
-import com.example.YAPO.models.Localization;
-import com.example.YAPO.models.UpdateField;
-import com.example.YAPO.models.User;
+import com.example.YAPO.models.*;
 import com.example.YAPO.repositories.LocalizationRepo;
 import com.example.YAPO.repositories.PlantRepo;
+import com.example.YAPO.repositories.PlantUpdateRepo;
 import com.example.YAPO.utility.ValueConverter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -44,6 +42,11 @@ public class PlantService {
     }
 
     public ResponseEntity<Object> updateField(Long id, User userDetails, UpdateField updateField) {
+        List<String> allowedFields = List.of("name", "species", "purchaseDate", "purchaseLocalization", "fertilizationDate", "alive", "deathReason", "wateringDate", "plantCondition", "plantSoil", "plantWatering", "plantBerth", "plantToxicity", "plantLifeExpectancy");
+
+        if (!allowedFields.contains(updateField.getFieldName())) {
+            return ResponseEntity.badRequest().body("Wrong Field");
+        }
         Plant plant = plantRepo.findByIdAndUser_Username(id, userDetails.getUsername());
 
         try {
@@ -51,7 +54,16 @@ public class PlantService {
             field.setAccessible(true);
 
             Object convertedValue = ValueConverter.convert(field.getType(), updateField.getFieldValue());
+            String oldValue =  (String) field.get(plant);
             field.set(plant, convertedValue);
+
+            PlantUpdate plantUpdate = new PlantUpdate();
+            plantUpdate.setOldValue(oldValue);
+            plantUpdate.setNewValue(updateField.getFieldValue());
+
+            plant.getPlantHistory().add(plantUpdate);
+
+            plantRepo.save(plant);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
