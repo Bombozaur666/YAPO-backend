@@ -1,6 +1,6 @@
 package com.example.YAPO.repositories;
 
-import com.example.YAPO.models.Localization;
+import com.example.YAPO.models.plant.Localization;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

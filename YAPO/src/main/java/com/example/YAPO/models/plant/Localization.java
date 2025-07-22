@@ -1,7 +1,10 @@
-package com.example.YAPO.models;
+package com.example.YAPO.models.plant;
 
+import com.example.YAPO.models.User;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -15,6 +18,8 @@ public class Localization {
     private String name;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "localization", cascade = CascadeType.ALL)
+    private List<Plant> plants;
 }

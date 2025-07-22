@@ -1,5 +1,6 @@
-package com.example.YAPO.models;
+package com.example.YAPO.models.plant;
 
+import com.example.YAPO.models.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -7,14 +8,20 @@ import java.util.Date;
 
 @Entity
 @Data
+@Table(name = "comments")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Plant plant;
+
+    @Column
+    private boolean visible = true;
 
     @Column
     private Date noteDate = new Date();

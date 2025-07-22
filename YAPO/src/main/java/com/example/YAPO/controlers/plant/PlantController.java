@@ -1,8 +1,7 @@
-package com.example.YAPO.controlers;
+package com.example.YAPO.controlers.plant;
 
-import com.example.YAPO.models.Plant;
-import com.example.YAPO.models.UpdateField;
-import com.example.YAPO.models.User;
+import com.example.YAPO.models.*;
+import com.example.YAPO.models.plant.Plant;
 import com.example.YAPO.service.PlantService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -48,7 +47,4 @@ public class PlantController {
     public  ResponseEntity<Object> updateField(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id, @RequestBody UpdateField updateField) {
         return plantService.updateField(id, (User) userDetails, updateField);
     }
-
-
-
 }

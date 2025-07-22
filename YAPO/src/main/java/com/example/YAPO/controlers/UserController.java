@@ -3,6 +3,7 @@ package com.example.YAPO.controlers;
 import com.example.YAPO.models.User;
 import com.example.YAPO.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,9 +22,10 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public User registerUser(@RequestBody User user) {
+    public ResponseEntity<?> registerUser(@RequestBody User user){
         String role = "user";
-        return userService.registerUser(user, role);
+        User newUser = userService.registerUser(user, role);
+        return  newUser.getId() != null ? ResponseEntity.ok(newUser) : ResponseEntity.badRequest().body("There was an error registering the user.\nTry other values");
     }
 
     @PostMapping("/login")

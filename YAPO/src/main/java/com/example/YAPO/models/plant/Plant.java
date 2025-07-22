@@ -1,5 +1,6 @@
-package com.example.YAPO.models;
+package com.example.YAPO.models.plant;
 
+import com.example.YAPO.models.User;
 import com.example.YAPO.models.enums.*;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -28,24 +29,22 @@ public class Plant {
     private String purchaseLocalization;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "localization_id", nullable = false)
     private Localization localization;
 
-    @Column()
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "plant", cascade = CascadeType.ALL)
+    private List<PlantUpdate> plantHistory;
+
+    @OneToMany(mappedBy = "plant", cascade = CascadeType.ALL)
     private List<Note> notes;
 
-    @Column()
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "plant", cascade = CascadeType.ALL)
     private List<Comment> comments;
 
-    @Column()
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<PlantUpdate> plantHistory;
+    @OneToMany(mappedBy = "plant", cascade = CascadeType.ALL)
+    private List<PhotoGallery> photoGallery;
 
     @Column()
     private Date fertilizationDate;
@@ -61,9 +60,6 @@ public class Plant {
 
     @Column()
     private Date creationDate = new Date();
-
-    @Column
-    private List<PhotoGallery> photoGallery;
 
     @Column
     private byte[] avatar;

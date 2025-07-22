@@ -1,6 +1,6 @@
 package com.example.YAPO.service;
 
-import com.example.YAPO.models.Localization;
+import com.example.YAPO.models.plant.Localization;
 import com.example.YAPO.models.User;
 import com.example.YAPO.repositories.LocalizationRepo;
 import org.springframework.stereotype.Service;

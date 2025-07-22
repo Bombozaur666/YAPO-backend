@@ -1,6 +1,9 @@
 package com.example.YAPO.service;
 
 import com.example.YAPO.models.*;
+import com.example.YAPO.models.plant.Localization;
+import com.example.YAPO.models.plant.Plant;
+import com.example.YAPO.models.plant.PlantUpdate;
 import com.example.YAPO.repositories.LocalizationRepo;
 import com.example.YAPO.repositories.PlantRepo;
 import com.example.YAPO.utility.ValueConverter;

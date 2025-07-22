@@ -1,6 +1,6 @@
 package com.example.YAPO.controlers;
 
-import com.example.YAPO.models.Localization;
+import com.example.YAPO.models.plant.Localization;
 import com.example.YAPO.models.User;
 import com.example.YAPO.service.LocalizationService;
 import org.springframework.http.ResponseEntity;

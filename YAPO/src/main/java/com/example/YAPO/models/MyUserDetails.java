@@ -28,19 +28,10 @@ public class MyUserDetails implements UserDetails {
         return user.getUsername();
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
 
     @Override
     public boolean isAccountNonLocked() {
         return user.isLocked();
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
     }
 
     @Override

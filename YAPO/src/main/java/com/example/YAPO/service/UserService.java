@@ -2,6 +2,7 @@ package com.example.YAPO.service;
 
 import com.example.YAPO.repositories.UserRepo;
 import com.example.YAPO.models.User;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,10 +23,15 @@ public class UserService {
 
     private final BCryptPasswordEncoder bcryptPasswordEncoder = new BCryptPasswordEncoder(12);
 
-    public User registerUser(User user, String role) {
+    public User registerUser(User user, String role){
         user.setPassword(bcryptPasswordEncoder.encode(user.getPassword()));
-        user.setRoles(role);
-        return userRepo.save(user);
+        try {
+            user.setRoles(role);
+            return userRepo.save(user);
+        }
+        catch (DataIntegrityViolationException e) {
+            return new User();
+        }
     }
 
     public String verifyUser(User user) {
