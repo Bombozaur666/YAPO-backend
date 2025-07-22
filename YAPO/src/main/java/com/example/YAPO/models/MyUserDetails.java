@@ -35,6 +35,16 @@ public class MyUserDetails implements UserDetails {
     }
 
     @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
     public boolean isEnabled() {
         return user.isEnabled();
     }
