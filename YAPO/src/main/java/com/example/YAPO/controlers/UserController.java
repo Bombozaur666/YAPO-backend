@@ -3,8 +3,11 @@ package com.example.YAPO.controlers;
 import com.example.YAPO.models.User;
 import com.example.YAPO.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/user")
@@ -29,7 +32,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String loginUser(@RequestBody User user) {
-        return userService.verifyUser(user);
+    public ResponseEntity<?> loginUser(@RequestBody User user) {
+        String response = userService.verifyUser(user);
+        return !Objects.equals(response, "fail") ? ResponseEntity.ok(response) : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }
