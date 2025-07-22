@@ -1,12 +1,11 @@
 package com.example.YAPO.controlers.plant;
 
 import com.example.YAPO.models.MyUserDetails;
+import com.example.YAPO.models.UpdateField;
 import com.example.YAPO.models.plant.Localization;
-import com.example.YAPO.models.User;
 import com.example.YAPO.service.LocalizationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,9 +35,9 @@ public class LocalizationController {
         return localizationService.getLocalizationByIdAndUsername(userDetails.getUsername(), id);
     }
 
-    @PutMapping("/")
-    public Localization updateLocalization(@AuthenticationPrincipal MyUserDetails userDetails, @RequestBody Localization localization) {
-        return localizationService.updateLocalizations(userDetails.getUsername(), localization);
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateLocalization(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable long id, @RequestBody UpdateField  updateField) {
+        return localizationService.updateLocalization(userDetails.getUsername(), updateField, id);
     }
 
     @DeleteMapping("/{id}")

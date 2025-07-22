@@ -17,9 +17,9 @@ public class Localization {
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.DETACH)
     private User user;
 
-    @OneToMany(mappedBy = "localization", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "localization", cascade = CascadeType.DETACH)
     private List<Plant> plants;
 }
