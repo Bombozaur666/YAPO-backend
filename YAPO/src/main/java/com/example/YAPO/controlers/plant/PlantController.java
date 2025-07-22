@@ -28,8 +28,8 @@ public class PlantController {
     }
 
     @PostMapping("/create-plant")
-    public Plant createPlant(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Plant plant) throws NoSuchElementException{
-        return plantService.createPlant(plant, (User) userDetails);
+    public Plant createPlant(@AuthenticationPrincipal MyUserDetails userDetails, @RequestBody Plant plant) throws NoSuchElementException{
+        return plantService.createPlant(plant, userDetails.getUser());
     }
 
     @GetMapping("/{id}")

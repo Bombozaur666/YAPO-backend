@@ -1,5 +1,6 @@
-package com.example.YAPO.controlers;
+package com.example.YAPO.controlers.plant;
 
+import com.example.YAPO.models.MyUserDetails;
 import com.example.YAPO.models.plant.Localization;
 import com.example.YAPO.models.User;
 import com.example.YAPO.service.LocalizationService;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "https://localhost:4200/")
-@RequestMapping("/rooms")
+@RequestMapping("/localization")
 public class LocalizationController {
     private final LocalizationService localizationService;
 
@@ -21,27 +22,27 @@ public class LocalizationController {
     }
 
     @GetMapping("/")
-    public List<Localization> roomPage(@AuthenticationPrincipal UserDetails userDetails) {
+    public List<Localization> localizationsPage(@AuthenticationPrincipal MyUserDetails userDetails) {
         return  localizationService.getAllLocalizationsByUsername(userDetails.getUsername());
     }
 
-    @PostMapping("/create-room")
-    public Localization createLocalization(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Localization localization) {
-        return localizationService.createLocalization((User) userDetails, localization);
+    @PostMapping("/create-localization")
+    public Localization createLocalization(@AuthenticationPrincipal MyUserDetails userDetails, @RequestBody Localization localization) {
+        return localizationService.createLocalization(userDetails.getUser().getId(), localization);
     }
     
     @GetMapping("/{id}")
-    public Localization getLocalizationById(@AuthenticationPrincipal UserDetails userDetails, @PathVariable long id) {
+    public Localization getLocalizationById(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable long id) {
         return localizationService.getLocalizationByIdAndUsername(userDetails.getUsername(), id);
     }
 
-    @PutMapping("")
-    public Localization updateLocalizationById(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Localization localization) {
-        return localizationService.updateLocalizations((User) userDetails, localization);
+    @PutMapping("/")
+    public Localization updateLocalization(@AuthenticationPrincipal MyUserDetails userDetails, @RequestBody Localization localization) {
+        return localizationService.updateLocalizations(userDetails.getUsername(), localization);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteLocalization( @AuthenticationPrincipal UserDetails userDetails, @PathVariable long id) {
+    public ResponseEntity<Object> deleteLocalization( @AuthenticationPrincipal MyUserDetails userDetails, @PathVariable long id) {
         return (localizationService.deleteByIdAndUsername(id, userDetails.getUsername())) ? ResponseEntity.notFound().build() : ResponseEntity.ok().build();
     }
 }
