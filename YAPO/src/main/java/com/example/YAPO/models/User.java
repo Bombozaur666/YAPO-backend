@@ -35,6 +35,8 @@ public class User {
 
     @Column(nullable = false, unique = true)
     @Email
+    @NotNull
+    @NotBlank
     private String email;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
