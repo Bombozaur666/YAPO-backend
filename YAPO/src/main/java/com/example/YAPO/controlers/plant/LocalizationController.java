@@ -26,7 +26,7 @@ public class LocalizationController {
     }
 
     @PostMapping("/create-localization")
-    public Localization createLocalization(@AuthenticationPrincipal MyUserDetails userDetails, @RequestBody Localization localization) {
+    public ResponseEntity<?> createLocalization(@AuthenticationPrincipal MyUserDetails userDetails, @RequestBody Localization localization) {
         return localizationService.createLocalization(userDetails.getUser().getId(), localization);
     }
     
@@ -42,6 +42,6 @@ public class LocalizationController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteLocalization( @AuthenticationPrincipal MyUserDetails userDetails, @PathVariable long id) {
-        return (localizationService.deleteByIdAndUsername(id, userDetails.getUsername())) ? ResponseEntity.notFound().build() : ResponseEntity.ok().build();
+        return localizationService.deleteByIdAndUsername(id, userDetails.getUsername());
     }
 }

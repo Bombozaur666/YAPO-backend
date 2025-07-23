@@ -6,9 +6,14 @@ import com.example.YAPO.models.plant.Plant;
 import com.example.YAPO.models.plant.PlantUpdate;
 import com.example.YAPO.repositories.LocalizationRepo;
 import com.example.YAPO.repositories.PlantRepo;
+import com.example.YAPO.repositories.UserRepo;
 import com.example.YAPO.utility.ValueConverter;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionSystemException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -17,28 +22,39 @@ import java.util.List;
 public class PlantService {
     private final PlantRepo plantRepo;
     private final LocalizationRepo localizationRepo;
+    private final UserRepo userRepo;
 
-    public PlantService(PlantRepo plantRepo, LocalizationRepo localizationRepo) {
+    public PlantService(PlantRepo plantRepo, LocalizationRepo localizationRepo, UserRepo userRepo) {
         this.plantRepo = plantRepo;
         this.localizationRepo = localizationRepo;
+        this.userRepo = userRepo;
     }
 
     public List<Plant> getAllPlants(String username) {
         return plantRepo.findByUser_Username(username);
     }
 
-    public Plant createPlant(Plant plant, User user) {
+    public ResponseEntity<Object> createPlant(Plant plant, User user) {
         Localization localization = localizationRepo.findById(plant.getLocalization().getId()).get();
+        User _user = userRepo.findById(user.getId())
+                .orElseThrow(() -> new RuntimeException("User Not Found"));
         plant.setLocalization(localization);
 
-        plant.setUser(user);
-        return plantRepo.save(plant);
+        plant.setUser(_user);
+
+        try {
+            return ResponseEntity.ok( plantRepo.save(plant));
+        } catch (DataIntegrityViolationException |
+                 ConstraintViolationException | TransactionSystemException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     public Plant getPlant(Long plant_id, String username) {
         return plantRepo.findByIdAndUser_Username(plant_id, username);
     }
 
+    @Transactional
     public void deletePlant(Long plantId, String username) {
         plantRepo.deletePlantByIdAndUser_Username(plantId, username);
     }
@@ -62,13 +78,12 @@ public class PlantService {
             PlantUpdate plantUpdate = new PlantUpdate();
             plantUpdate.setOldValue(oldValue);
             plantUpdate.setNewValue(updateField.getFieldValue());
-
             plant.getPlantHistory().add(plantUpdate);
 
-            plantRepo.save(plant);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+            return ResponseEntity.ok(plantRepo.save(plant));
+        } catch (NoSuchFieldException | IllegalAccessException | DataIntegrityViolationException |
+                 ConstraintViolationException | TransactionSystemException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return ResponseEntity.ok().build();
     }
 }

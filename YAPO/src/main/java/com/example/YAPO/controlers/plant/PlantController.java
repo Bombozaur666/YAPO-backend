@@ -5,7 +5,6 @@ import com.example.YAPO.models.plant.Plant;
 import com.example.YAPO.service.PlantService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,28 +22,28 @@ public class PlantController {
     }
 
     @GetMapping("/")
-    public List<Plant> plantsPage(@AuthenticationPrincipal UserDetails userDetails) {
+    public List<Plant> plantsPage(@AuthenticationPrincipal MyUserDetails userDetails) {
         return plantService.getAllPlants(userDetails.getUsername());
     }
 
     @PostMapping("/create-plant")
-    public Plant createPlant(@AuthenticationPrincipal MyUserDetails userDetails, @RequestBody Plant plant) throws NoSuchElementException{
+    public ResponseEntity<Object> createPlant(@AuthenticationPrincipal MyUserDetails userDetails, @RequestBody Plant plant) throws NoSuchElementException{
         return plantService.createPlant(plant, userDetails.getUser());
     }
 
     @GetMapping("/{id}")
-    public Plant getPlantPage(@AuthenticationPrincipal UserDetails userDetails, @PathVariable long id) {
+    public Plant getPlantPage(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable long id) {
         return plantService.getPlant(id, userDetails.getUsername());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deletePlantByIdPage(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id) {
+    public ResponseEntity<Object> deletePlantByIdPage(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id) {
         plantService.deletePlant(id, userDetails.getUsername());
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/{id}/update")
-    public  ResponseEntity<Object> updateField(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id, @RequestBody UpdateField updateField) {
-        return plantService.updateField(id, (User) userDetails, updateField);
+    public  ResponseEntity<Object> updateField(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody UpdateField updateField) {
+        return plantService.updateField(id, userDetails.getUser(), updateField);
     }
 }

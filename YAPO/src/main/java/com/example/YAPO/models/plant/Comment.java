@@ -1,6 +1,7 @@
 package com.example.YAPO.models.plant;
 
 import com.example.YAPO.models.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,9 +15,11 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL)
     private User user;
 
+    @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL)
     private Plant plant;
 

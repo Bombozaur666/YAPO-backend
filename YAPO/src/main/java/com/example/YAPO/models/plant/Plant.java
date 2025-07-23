@@ -2,6 +2,8 @@ package com.example.YAPO.models.plant;
 
 import com.example.YAPO.models.User;
 import com.example.YAPO.models.enums.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -29,20 +31,26 @@ public class Plant {
     private String purchaseLocalization;
 
     @ManyToOne(cascade = CascadeType.ALL)
+    @JsonBackReference
     private User user;
 
+    @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL)
     private Localization localization;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "plant", cascade = CascadeType.ALL)
     private List<PlantUpdate> plantHistory;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "plant", cascade = CascadeType.ALL)
     private List<Note> notes;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "plant", cascade = CascadeType.ALL)
     private List<Comment> comments;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "plant", cascade = CascadeType.ALL)
     private List<PhotoGallery> photoGallery;
 
