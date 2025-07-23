@@ -63,7 +63,8 @@ public class LocalizationService {
             field.set(_localization, convertedValue);
 
             localizationRepo.save(_localization);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException |DataIntegrityViolationException |
+                 ConstraintViolationException | TransactionSystemException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
         return ResponseEntity.ok().build();

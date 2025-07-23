@@ -2,7 +2,10 @@ package com.example.YAPO.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,13 +22,19 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
+    @NotBlank
+    @NotNull
     private String username;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
+    @Size(min = 8, max = 256)
+    @NotBlank
+    @NotNull
     private String password;
 
     @Column(nullable = false, unique = true)
+    @Email
     private String email;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

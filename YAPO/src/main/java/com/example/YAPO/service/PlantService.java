@@ -35,7 +35,8 @@ public class PlantService {
     }
 
     public ResponseEntity<Object> createPlant(Plant plant, User user) {
-        Localization localization = localizationRepo.findById(plant.getLocalization().getId()).get();
+        Localization localization = localizationRepo.findById(plant.getLocalization().getId())
+                .orElseThrow(() -> new RuntimeException("Localization not found"));
         User _user = userRepo.findById(user.getId())
                 .orElseThrow(() -> new RuntimeException("User Not Found"));
         plant.setLocalization(localization);

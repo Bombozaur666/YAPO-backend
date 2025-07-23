@@ -3,6 +3,7 @@ package com.example.YAPO.controlers.plant;
 import com.example.YAPO.models.*;
 import com.example.YAPO.models.plant.Plant;
 import com.example.YAPO.service.PlantService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class PlantController {
     }
 
     @PostMapping("/create-plant")
-    public ResponseEntity<Object> createPlant(@AuthenticationPrincipal MyUserDetails userDetails, @RequestBody Plant plant) throws NoSuchElementException{
+    public ResponseEntity<Object> createPlant(@AuthenticationPrincipal MyUserDetails userDetails, @RequestBody @Valid Plant plant) throws NoSuchElementException{
         return plantService.createPlant(plant, userDetails.getUser());
     }
 
@@ -43,7 +44,7 @@ public class PlantController {
     }
 
     @PatchMapping("/{id}/update")
-    public  ResponseEntity<Object> updateField(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody UpdateField updateField) {
+    public  ResponseEntity<Object> updateField(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody @Valid UpdateField updateField) {
         return plantService.updateField(id, userDetails.getUser(), updateField);
     }
 }

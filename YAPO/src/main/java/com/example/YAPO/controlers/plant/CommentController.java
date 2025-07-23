@@ -1,8 +1,10 @@
 package com.example.YAPO.controlers.plant;
 
 import com.example.YAPO.models.MyUserDetails;
+import com.example.YAPO.models.UpdateField;
 import com.example.YAPO.models.plant.Comment;
 import com.example.YAPO.service.CommentService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -18,15 +20,17 @@ public class CommentController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createComment (@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody Comment comment) {
+    public ResponseEntity<?> createComment (@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody @Valid Comment comment) {
         return commentService.createComment(id, userDetails.getUser(), comment);
     }
 
     @DeleteMapping("")
-    public ResponseEntity<?> deleteComment(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody Comment comment) {
+    public ResponseEntity<?> deleteComment(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody @Valid Comment comment) {
         return commentService.deleteComment(id, comment, userDetails.getUser());
     }
 
     @PatchMapping("")
-    public void updateComment(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody Comment comment) {}
+    public ResponseEntity<?> updateComment(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody @Valid UpdateField  updateField) {
+        return commentService.updateComment(id, updateField, userDetails.getUser());
+    }
 }

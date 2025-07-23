@@ -2,6 +2,7 @@ package com.example.YAPO.controlers.plant;
 
 import com.example.YAPO.models.MyUserDetails;
 import com.example.YAPO.models.plant.Note;
+import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,11 +12,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/plants/{id}/note")
 public class NoteController {
     @PostMapping("")
-    public void createNote(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, Note note) {}
+    public void createNote(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody @Valid Note note) {}
 
     @DeleteMapping("")
-    public void deleteNote(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, Note note) {}
+    public void deleteNote(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody @Valid Note note) {}
 
     @PatchMapping("")
-    public void updateNote(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, Note note) {}
+    public void updateNote(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody @Valid Note note) {}
 }

@@ -27,7 +27,10 @@ public class Comment {
     private boolean visible = true;
 
     @Column
-    private Date noteDate = new Date();
+    private Date creationDate = new Date();
+
+    @Column
+    private Date editDate;
 
     @Column
     private String comment;
