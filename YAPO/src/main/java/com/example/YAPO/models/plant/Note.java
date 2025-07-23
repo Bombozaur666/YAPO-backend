@@ -23,4 +23,6 @@ public class Note {
 
     @Column
     private Date noteDate = new Date();
+    @Column
+    private Date editDate;
 }

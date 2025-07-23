@@ -50,7 +50,8 @@ public class CommentService {
     }
 
     @Transactional
-    public ResponseEntity<?> deleteComment(Long plantId, Comment comment, User user) {
+    public ResponseEntity<?> deleteComment(Long plantId, Long commentId, User user) {
+        Comment comment = commentRepo.findByIdAndUser_Username(commentId, user.getUsername());
         if (Objects.equals(comment.getUser().getId(), user.getId()) && Objects.equals(comment.getPlant().getId(), plantId)) {
             try {
                 comment.setVisible(false);
@@ -87,5 +88,9 @@ public class CommentService {
                  ConstraintViolationException | TransactionSystemException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    public ResponseEntity<Object> getComments(Long plantId, User user) {
+        return ResponseEntity.ok(commentRepo.findAllByIdAndUser_IdAndVisible(plantId, user.getId(), true));
     }
 }

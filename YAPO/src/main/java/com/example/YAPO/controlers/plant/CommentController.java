@@ -19,14 +19,18 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+    @GetMapping("")
+    public ResponseEntity<?> getComments(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id) {
+        return commentService.getComments(id, userDetails.getUser());
+    }
     @PostMapping("")
     public ResponseEntity<?> createComment (@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody @Valid Comment comment) {
         return commentService.createComment(id, userDetails.getUser(), comment);
     }
 
-    @DeleteMapping("")
-    public ResponseEntity<?> deleteComment(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody @Valid Comment comment) {
-        return commentService.deleteComment(id, comment, userDetails.getUser());
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<?> deleteComment(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @PathVariable Long commentId) {
+        return commentService.deleteComment(id, commentId, userDetails.getUser());
     }
 
     @PatchMapping("")

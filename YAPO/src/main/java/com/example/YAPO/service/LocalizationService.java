@@ -62,12 +62,11 @@ public class LocalizationService {
             Object convertedValue = ValueConverter.convert(field.getType(), updateField.getFieldValue());
             field.set(_localization, convertedValue);
 
-            localizationRepo.save(_localization);
+            return ResponseEntity.ok(localizationRepo.save(_localization));
         } catch (NoSuchFieldException | IllegalAccessException |DataIntegrityViolationException |
                  ConstraintViolationException | TransactionSystemException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return ResponseEntity.ok().build();
     }
 
     @Transactional
