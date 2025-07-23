@@ -24,9 +24,8 @@ public class AdminController {
     }
 
     @PostMapping("/create-admin")
-    public ResponseEntity<?> createAdmin(@RequestBody @Valid User user){
+    public ResponseEntity<?> createAdmin(@RequestBody @Valid User user) {
         String role = "admin";
-        User newUser = userService.registerUser(user, role);
-        return  newUser.getId() != null ? ResponseEntity.ok(newUser) : ResponseEntity.badRequest().body("There was an error registering the user.\nTry other values");
+        return userService.registerUser(user, role);
     }
 }

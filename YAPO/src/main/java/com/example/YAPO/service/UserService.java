@@ -2,7 +2,9 @@ package com.example.YAPO.service;
 
 import com.example.YAPO.repositories.UserRepo;
 import com.example.YAPO.models.User;
+import jakarta.validation.ValidationException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,15 +25,18 @@ public class UserService {
 
     private final BCryptPasswordEncoder bcryptPasswordEncoder = new BCryptPasswordEncoder(12);
 
-    public User registerUser(User user, String role){
+    public ResponseEntity<?> registerUser(User user, String role){
         user.setPassword(bcryptPasswordEncoder.encode(user.getPassword()));
         try {
             user.setRoles(role);
-            return userRepo.save(user);
+            return ResponseEntity.ok(userRepo.save(user));
         }
         catch (DataIntegrityViolationException e) {
-            return new User();
+            return ResponseEntity.badRequest().body("Email or Username is already in use");
+        } catch (ValidationException e) {
+            return ResponseEntity.badRequest().body("Validation error");
         }
+
     }
 
     public String verifyUser(User user) {

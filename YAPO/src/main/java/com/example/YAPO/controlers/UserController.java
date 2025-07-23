@@ -28,8 +28,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody @Valid User user){
         String role = "user";
-        User newUser = userService.registerUser(user, role);
-        return  newUser.getId() != null ? ResponseEntity.ok(newUser) : ResponseEntity.badRequest().body("There was an error registering the user.\nTry other values");
+        return  userService.registerUser(user, role);
     }
 
     @PostMapping("/login")
