@@ -1,6 +1,7 @@
 package com.example.YAPO.service;
 
 import com.example.YAPO.models.*;
+import com.example.YAPO.models.enums.ErrorList;
 import com.example.YAPO.models.plant.Localization;
 import com.example.YAPO.models.plant.Plant;
 import com.example.YAPO.models.plant.PlantUpdate;
@@ -10,7 +11,6 @@ import com.example.YAPO.repositories.UserRepo;
 import com.example.YAPO.utility.ValueConverter;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,21 +34,23 @@ public class PlantService {
         return plantRepo.findByUser_Username(username);
     }
 
-    public ResponseEntity<Object> createPlant(Plant plant, User user) {
+    @Transactional
+    public Plant createPlant(Plant plant, User user) {
         Localization localization = localizationRepo.findById(plant.getLocalization().getId())
-                .orElseThrow(() -> new RuntimeException("Localization not found"));
+                .orElseThrow(() -> new RuntimeException(ErrorList.LOCALIZATION_NOT_FOUND.toString()));
         User _user = userRepo.findById(user.getId())
-                .orElseThrow(() -> new RuntimeException("User Not Found"));
+                .orElseThrow(() -> new RuntimeException(ErrorList.USER_NOT_FOUND.toString()));
         plant.setLocalization(localization);
 
         plant.setUser(_user);
 
         try {
-            return ResponseEntity.ok( plantRepo.save(plant));
+            plant = plantRepo.save(plant);
         } catch (DataIntegrityViolationException |
                  ConstraintViolationException | TransactionSystemException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            throw new RuntimeException(ErrorList.ERROR_DURING_DATABASE_SAVING.toString());
         }
+        return plant;
     }
 
     public Plant getPlant(Long plant_id, String username) {
@@ -56,15 +58,21 @@ public class PlantService {
     }
 
     @Transactional
-    public void deletePlant(Long plantId, String username) {
-        plantRepo.deletePlantByIdAndUser_Username(plantId, username);
+    public boolean deletePlant(Long plantId, String username) {
+        try {
+            plantRepo.deletePlantByIdAndUser_Username(plantId, username);
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException(ErrorList.UNEXPECTED_ERROR_DURING_DELETE.toString());
+        }
+        return checkIfPlantExist(plantId);
     }
 
-    public ResponseEntity<Object> updateField(Long id, User userDetails, UpdateField updateField) {
+    @Transactional
+    public Plant updateField(Long id, User userDetails, UpdateField updateField) {
         List<String> allowedFields = List.of("name", "species", "purchaseDate", "purchaseLocalization", "fertilizationDate", "alive", "deathReason", "wateringDate", "plantCondition", "plantSoil", "plantWatering", "plantBerth", "plantToxicity", "plantLifeExpectancy");
 
         if (!allowedFields.contains(updateField.getFieldName())) {
-            return ResponseEntity.badRequest().body("Wrong Field");
+            throw new RuntimeException(ErrorList.WRONG_FIELD_TO_UPDATE.toString());
         }
         Plant plant = plantRepo.findByIdAndUser_Username(id, userDetails.getUsername());
 
@@ -81,10 +89,16 @@ public class PlantService {
             plantUpdate.setNewValue(updateField.getFieldValue());
             plant.getPlantHistory().add(plantUpdate);
 
-            return ResponseEntity.ok(plantRepo.save(plant));
+            plant = plantRepo.save(plant);
+
         } catch (NoSuchFieldException | IllegalAccessException | DataIntegrityViolationException |
                  ConstraintViolationException | TransactionSystemException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            throw new RuntimeException(ErrorList.ERROR_DURING_DATABASE_SAVING.toString());
         }
+        return plant;
+    }
+
+    private boolean checkIfPlantExist(long id) {
+        return plantRepo.existsById(id);
     }
 }

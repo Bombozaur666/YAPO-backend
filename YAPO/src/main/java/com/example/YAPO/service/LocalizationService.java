@@ -1,6 +1,7 @@
 package com.example.YAPO.service;
 
 import com.example.YAPO.models.UpdateField;
+import com.example.YAPO.models.enums.ErrorList;
 import com.example.YAPO.models.plant.Localization;
 import com.example.YAPO.models.User;
 import com.example.YAPO.repositories.LocalizationRepo;
@@ -9,7 +10,6 @@ import com.example.YAPO.utility.ValueConverter;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,27 +31,30 @@ public class LocalizationService {
         return localizationRepo.findByUser_Username(username);
     }
 
-    public ResponseEntity<Object> createLocalization(Long userID, Localization localization) {
+    @Transactional
+    public Localization createLocalization(Long userID, Localization localization) {
         User user = userRepo.findById(userID)
-                .orElseThrow(() -> new RuntimeException("User Not Found"));
+                .orElseThrow(() -> new RuntimeException(ErrorList.USER_NOT_FOUND.toString()));
 
         localization.setUser(user);
         try {
-            return ResponseEntity.ok(localizationRepo.save(localization));
+             localizationRepo.save(localization);
         } catch (DataIntegrityViolationException |
                  ConstraintViolationException | TransactionSystemException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            throw  new RuntimeException(ErrorList.ERROR_DURING_DATABASE_SAVING.toString());
         }
+        return localization;
     }
 
     public Localization getLocalizationByIdAndUsername(String username, long id) {
         return localizationRepo.findByIdAndUser_Username(id, username);
     }
 
-    public ResponseEntity<Object> updateLocalization(String username, UpdateField updateField, long id) {
+    @Transactional
+    public Localization updateLocalization(String username, UpdateField updateField, long id) {
         List<String> allowedFields = List.of("name");
         if (!allowedFields.contains(updateField.getFieldName())) {
-            return ResponseEntity.badRequest().body("Wrong Field");
+            throw new RuntimeException(ErrorList.WRONG_FIELD_TO_UPDATE.toString());
         }
         Localization _localization = localizationRepo.findByIdAndUser_Username(id, username);
 
@@ -62,21 +65,22 @@ public class LocalizationService {
             Object convertedValue = ValueConverter.convert(field.getType(), updateField.getFieldValue());
             field.set(_localization, convertedValue);
 
-            return ResponseEntity.ok(localizationRepo.save(_localization));
+            _localization = localizationRepo.save(_localization);
         } catch (NoSuchFieldException | IllegalAccessException |DataIntegrityViolationException |
                  ConstraintViolationException | TransactionSystemException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            throw  new RuntimeException(ErrorList.ERROR_DURING_DATABASE_SAVING.toString());
         }
+        return _localization;
     }
 
     @Transactional
-    public ResponseEntity<Object> deleteByIdAndUsername(long id, String username) {
+    public boolean deleteByIdAndUsername(long id, String username) {
         try {
             localizationRepo.deleteByIdAndUser_Username(id, username);
-            return checkIfLocalizationExist(id) ? ResponseEntity.badRequest().build() :  ResponseEntity.ok().build();
         } catch (EmptyResultDataAccessException | DataIntegrityViolationException | TransactionSystemException e ) {
-            return ResponseEntity.notFound().build();
+            throw  new RuntimeException(ErrorList.UNEXPECTED_ERROR_DURING_DELETE.toString());
         }
+        return !checkIfLocalizationExist(id);
     }
 
     private boolean checkIfLocalizationExist(long id) {

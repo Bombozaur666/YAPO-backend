@@ -1,16 +1,19 @@
 package com.example.YAPO.service;
 
 import com.example.YAPO.models.User;
+import com.example.YAPO.models.enums.ErrorList;
 import com.example.YAPO.models.plant.PhotoGallery;
 import com.example.YAPO.models.plant.Plant;
 import com.example.YAPO.repositories.PhotoRepo;
 import com.example.YAPO.repositories.PlantRepo;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
+
+import java.util.List;
 
 @Service
 public class PhotoService {
@@ -22,35 +25,42 @@ public class PhotoService {
         this.photoRepo = photoRepo;
     }
 
-    public ResponseEntity<?> createPhoto(Long id, User user, @Valid PhotoGallery photoGallery) {
+    @Transactional
+    public PhotoGallery createPhoto(Long id, User user, @Valid PhotoGallery photoGallery) {
         Plant _plant = plantRepo.findByIdAndUser_Username(id,user.getUsername());
         if (_plant != null) {
             photoGallery.setPlant(_plant);
-            photoRepo.save(photoGallery);
-            return ResponseEntity.ok(photoGallery);
+            try {
+                photoGallery = photoRepo.save(photoGallery);
+            } catch (DataIntegrityViolationException |
+                     ConstraintViolationException | TransactionSystemException e) {
+                throw new RuntimeException(ErrorList.ERROR_DURING_DATABASE_SAVING.toString());
+            }
         } else {
-            return ResponseEntity.badRequest().body("Wrong request");
+            throw new RuntimeException(ErrorList.PLANT_NOT_FOUND.toString());
         }
+        return photoGallery;
     }
 
-    public ResponseEntity<Object> updatePhoto(User user, Long photoId, PhotoGallery photoGallery) {
+    @Transactional
+    public PhotoGallery updatePhoto(User user, Long photoId, PhotoGallery photoGallery) {
         PhotoGallery _photo = photoRepo.findByIdAndPlant_User_Id(photoId, user.getId());
         if (_photo != null) {
             _photo.setDescription(photoGallery.getDescription());
             _photo.setTitle(photoGallery.getTitle());
             try {
-                photoRepo.save(_photo);
+                _photo = photoRepo.save(_photo);
             } catch (DataIntegrityViolationException |
                      ConstraintViolationException | TransactionSystemException e) {
-                return ResponseEntity.badRequest().body(e.getMessage());
+                throw new RuntimeException(ErrorList.ERROR_DURING_DATABASE_SAVING.toString());
             }
-            return ResponseEntity.ok(_photo);
         } else  {
-            return ResponseEntity.badRequest().body("Wrong request");
+            throw new RuntimeException(ErrorList.PHOTO_NOT_FOUND.toString());
         }
+        return _photo;
     }
 
-    public ResponseEntity<Object> getPhotos(Long plantId, User user) {
-        return ResponseEntity.ok(photoRepo.findAllByPlant_IdAndPlant_User_Id(plantId, user.getId()));
+    public List<PhotoGallery> getPhotos(Long plantId, User user) {
+        return photoRepo.findAllByPlant_IdAndPlant_User_Id(plantId, user.getId());
     }
 }

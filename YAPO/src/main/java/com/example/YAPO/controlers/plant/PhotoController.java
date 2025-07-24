@@ -4,9 +4,10 @@ import com.example.YAPO.models.MyUserDetails;
 import com.example.YAPO.models.plant.PhotoGallery;
 import com.example.YAPO.service.PhotoService;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "https://localhost:4200/")
@@ -19,17 +20,17 @@ public class PhotoController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> addPhoto(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody @Valid PhotoGallery photoGallery) {
+    public PhotoGallery addPhoto(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody @Valid PhotoGallery photoGallery) {
         return photoService.createPhoto(id, userDetails.getUser(), photoGallery);
     }
 
     @GetMapping("")
-    public ResponseEntity<?> getAllPhotos(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id) {
+    public List<PhotoGallery> getAllPhotos(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id) {
         return photoService.getPhotos(id, userDetails.getUser());
     }
 
     @PatchMapping("/{photoId}")
-    public ResponseEntity<?> updatePhoto(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long photoId, @RequestBody PhotoGallery photoGallery) {
+    public PhotoGallery updatePhoto(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long photoId, @RequestBody PhotoGallery photoGallery) {
         return photoService.updatePhoto(userDetails.getUser(), photoId, photoGallery);
     }
 

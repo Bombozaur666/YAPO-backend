@@ -1,6 +1,7 @@
 package com.example.YAPO.controlers;
 
 import com.example.YAPO.models.User;
+import com.example.YAPO.models.enums.Roles;
 import com.example.YAPO.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -26,13 +27,12 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody @Valid User user){
-        String role = "user";
-        return  userService.registerUser(user, role);
+    public User registerUser(@RequestBody @Valid User user){
+        return  userService.registerUser(user, Roles.user.toString());
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody @Valid User user) {
+    public ResponseEntity<?> loginUser(@RequestBody User user) {
         String response = userService.verifyUser(user);
         return !Objects.equals(response, "fail") ? ResponseEntity.ok(response) : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }

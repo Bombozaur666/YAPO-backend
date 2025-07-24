@@ -2,6 +2,7 @@ package com.example.YAPO.service;
 
 import com.example.YAPO.models.UpdateField;
 import com.example.YAPO.models.User;
+import com.example.YAPO.models.enums.ErrorList;
 import com.example.YAPO.models.plant.Comment;
 import com.example.YAPO.models.plant.Plant;
 import com.example.YAPO.repositories.CommentRepo;
@@ -10,7 +11,6 @@ import com.example.YAPO.repositories.UserRepo;
 import com.example.YAPO.utility.ValueConverter;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,47 +32,48 @@ public class CommentService {
     }
 
     @Transactional
-    public ResponseEntity<?> createComment(Long plantId, User user, Comment comment) {
+    public Comment createComment(Long plantId, User user, Comment comment) {
         User _user = userRepo.findById(user.getId())
-                .orElseThrow(() -> new RuntimeException("User Not Found"));
+                .orElseThrow(() -> new RuntimeException(ErrorList.USER_NOT_FOUND.toString()));
         comment.setUser(_user);
 
         Plant _plant = plantRepo.findById(plantId)
-                .orElseThrow(() -> new RuntimeException("User Not Found"));
+                .orElseThrow(() -> new RuntimeException(ErrorList.PLANT_NOT_FOUND.toString()));
         comment.setPlant(_plant);
 
         try {
-            return ResponseEntity.ok(commentRepo.save(comment));
+            commentRepo.save(comment);
         } catch (DataIntegrityViolationException |
                  ConstraintViolationException | TransactionSystemException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            throw new RuntimeException(ErrorList.ERROR_DURING_DATABASE_SAVING.toString());
         }
+        return comment;
     }
 
     @Transactional
-    public ResponseEntity<?> deleteComment(Long plantId, Long commentId, User user) {
+    public boolean deleteComment(Long plantId, Long commentId, User user) {
         Comment comment = commentRepo.findByIdAndUser_Username(commentId, user.getUsername());
         if (Objects.equals(comment.getUser().getId(), user.getId()) && Objects.equals(comment.getPlant().getId(), plantId)) {
+            comment.setVisible(false);
             try {
-                comment.setVisible(false);
                 commentRepo.save(comment);
-                return checkIfCommentIsVisible(comment.getId()) ? ResponseEntity.badRequest().build() :  ResponseEntity.ok().build();
             } catch (DataIntegrityViolationException |
                      ConstraintViolationException | TransactionSystemException e ) {
-                return ResponseEntity.notFound().build();
+                throw new RuntimeException(ErrorList.ERROR_DURING_DATABASE_SAVING.toString());
             }
         }
-        return ResponseEntity.notFound().build();
+        return !checkIfCommentIsVisible(comment.getId());
     }
 
     private boolean checkIfCommentIsVisible(long id) {
-        return commentRepo.findById(id).orElseThrow(() -> new RuntimeException("Comment not found")).isVisible();
+        return commentRepo.findById(id).orElseThrow(() -> new RuntimeException(ErrorList.COMMENT_NOT_FOUND.toString())).isVisible();
     }
 
-    public ResponseEntity<Object> updateComment(Long id, UpdateField updateField, User user) {
-        List<String> allowedFields = List.of("name", "visible");
+    @Transactional
+    public Comment updateComment(Long id, UpdateField updateField, User user) {
+        List<String> allowedFields = List.of("name", "comment");
         if (!allowedFields.contains(updateField.getFieldName())) {
-            return ResponseEntity.badRequest().body("Wrong Field");
+            throw new RuntimeException(ErrorList.WRONG_FIELD_TO_UPDATE.toString());
         }
         Comment _comment = commentRepo.findByIdAndUser_Username(id, user.getUsername());
 
@@ -83,14 +84,15 @@ public class CommentService {
             Object convertedValue = ValueConverter.convert(field.getType(), updateField.getFieldValue());
             field.set(_comment, convertedValue);
 
-            return ResponseEntity.ok(commentRepo.save(_comment));
+            _comment = commentRepo.save(_comment);
         } catch (NoSuchFieldException | IllegalAccessException | DataIntegrityViolationException |
                  ConstraintViolationException | TransactionSystemException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            throw new RuntimeException(ErrorList.ERROR_DURING_DATABASE_SAVING.toString());
         }
+        return _comment;
     }
 
-    public ResponseEntity<Object> getComments(Long plantId, User user) {
-        return ResponseEntity.ok(commentRepo.findAllByIdAndUser_IdAndVisible(plantId, user.getId(), true));
+    public List<Comment> getComments(Long plantId, User user) {
+        return commentRepo.findAllByIdAndUser_IdAndVisible(plantId, user.getId(), true);
     }
 }

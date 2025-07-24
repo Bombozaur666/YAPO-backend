@@ -5,7 +5,6 @@ import com.example.YAPO.models.UpdateField;
 import com.example.YAPO.models.plant.Localization;
 import com.example.YAPO.service.LocalizationService;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +26,7 @@ public class LocalizationController {
     }
 
     @PostMapping("/create-localization")
-    public ResponseEntity<?> createLocalization(@AuthenticationPrincipal MyUserDetails userDetails, @RequestBody @Valid Localization localization) {
+    public Localization createLocalization(@AuthenticationPrincipal MyUserDetails userDetails, @RequestBody @Valid Localization localization) {
         return localizationService.createLocalization(userDetails.getUser().getId(), localization);
     }
     
@@ -37,12 +36,12 @@ public class LocalizationController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateLocalization(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable long id, @RequestBody @Valid UpdateField  updateField) {
+    public Localization updateLocalization(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable long id, @RequestBody @Valid UpdateField  updateField) {
         return localizationService.updateLocalization(userDetails.getUsername(), updateField, id);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteLocalization( @AuthenticationPrincipal MyUserDetails userDetails, @PathVariable long id) {
+    public boolean deleteLocalization( @AuthenticationPrincipal MyUserDetails userDetails, @PathVariable long id) {
         return localizationService.deleteByIdAndUsername(id, userDetails.getUsername());
     }
 }

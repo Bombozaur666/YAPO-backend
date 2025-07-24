@@ -5,9 +5,10 @@ import com.example.YAPO.models.UpdateField;
 import com.example.YAPO.models.plant.Comment;
 import com.example.YAPO.service.CommentService;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "https://localhost:4200/")
@@ -20,21 +21,21 @@ public class CommentController {
     }
 
     @GetMapping("")
-    public ResponseEntity<?> getComments(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id) {
+    public List<Comment> getComments(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id) {
         return commentService.getComments(id, userDetails.getUser());
     }
     @PostMapping("")
-    public ResponseEntity<?> createComment (@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody @Valid Comment comment) {
+    public Comment createComment (@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody @Valid Comment comment) {
         return commentService.createComment(id, userDetails.getUser(), comment);
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<?> deleteComment(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @PathVariable Long commentId) {
+    public Boolean deleteComment(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @PathVariable Long commentId) {
         return commentService.deleteComment(id, commentId, userDetails.getUser());
     }
 
     @PatchMapping("")
-    public ResponseEntity<?> updateComment(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody @Valid UpdateField  updateField) {
+    public Comment updateComment(@AuthenticationPrincipal MyUserDetails userDetails, @PathVariable Long id, @RequestBody @Valid UpdateField  updateField) {
         return commentService.updateComment(id, updateField, userDetails.getUser());
     }
 }
