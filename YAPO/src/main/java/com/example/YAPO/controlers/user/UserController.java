@@ -30,6 +30,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
     public User registerUser(@RequestBody @Valid User user){
         return  userService.registerUser(user, Roles.ROLE_USER.toString());
     }
@@ -58,7 +59,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping({"/restore", "/confirm"})
+    @GetMapping( "/enable")
     public ResponseEntity<?> enableUser(@RequestParam String token ){
         userService.enableUser(token);
         return ResponseEntity.ok().build();

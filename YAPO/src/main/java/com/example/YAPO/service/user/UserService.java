@@ -47,7 +47,7 @@ public class UserService {
     }
 
     public User registerUser(User user, String role){
-        String url = "confirm";
+        String url = "enable";
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.getRoles().add(roleRepo.findByName(role));
@@ -109,7 +109,7 @@ public class UserService {
     }
 
     public void reactivateUser(String username) {
-        String  url = "restore";
+        String  url = "enable";
         User _user = userRepo.findByUsername(username);
         if (_user == null) {throw new RuntimeException(ErrorList.USER_NOT_FOUND.toString());}
 
