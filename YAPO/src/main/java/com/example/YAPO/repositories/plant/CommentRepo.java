@@ -1,4 +1,4 @@
-package com.example.YAPO.repositories;
+package com.example.YAPO.repositories.plant;
 
 import com.example.YAPO.models.plant.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
