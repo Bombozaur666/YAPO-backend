@@ -1,4 +1,4 @@
-package com.example.YAPO.models;
+package com.example.YAPO.models.User;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -6,16 +6,20 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
 @Data
-@Table(name = "Users")
+@Table(name = "users")
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
@@ -40,8 +44,13 @@ public class User {
     private String email;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Column()
-    private String roles = "user";
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
     @Column()
     private Date registrationDate = new Date();

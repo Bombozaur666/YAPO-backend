@@ -1,6 +1,6 @@
 package com.example.YAPO.models.plant;
 
-import com.example.YAPO.models.User;
+import com.example.YAPO.models.User.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;

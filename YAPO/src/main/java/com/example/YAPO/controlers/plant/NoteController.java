@@ -1,6 +1,6 @@
 package com.example.YAPO.controlers.plant;
 
-import com.example.YAPO.models.MyUserDetails;
+import com.example.YAPO.models.User.MyUserDetails;
 import com.example.YAPO.models.UpdateField;
 import com.example.YAPO.models.plant.Note;
 import com.example.YAPO.service.NoteService;

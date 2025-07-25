@@ -1,7 +1,7 @@
 package com.example.YAPO.service;
 
 import com.example.YAPO.models.UpdateField;
-import com.example.YAPO.models.User;
+import com.example.YAPO.models.User.User;
 import com.example.YAPO.models.enums.ErrorList;
 import com.example.YAPO.models.plant.Note;
 import com.example.YAPO.models.plant.Plant;

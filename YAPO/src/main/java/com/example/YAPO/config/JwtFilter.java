@@ -1,7 +1,7 @@
 package com.example.YAPO.config;
 
 import com.example.YAPO.service.JWTService;
-import com.example.YAPO.service.MyUserDetailService;
+import com.example.YAPO.service.user.MyUserDetailService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

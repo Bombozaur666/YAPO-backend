@@ -1,12 +1,13 @@
-package com.example.YAPO.controlers;
+package com.example.YAPO.controlers.user;
 
-import com.example.YAPO.models.User;
+import com.example.YAPO.models.User.MyUserDetails;
+import com.example.YAPO.models.User.User;
 import com.example.YAPO.models.enums.Roles;
-import com.example.YAPO.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.YAPO.service.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
@@ -22,18 +23,24 @@ public class UserController {
     }
 
     @GetMapping("/")
-    public User getUser(HttpServletRequest request) {
-        return userService.getUserByUsername(request.getUserPrincipal().getName());
+    public User getUser(@AuthenticationPrincipal MyUserDetails userDetails) {
+        return userDetails.getUser();
     }
 
     @PostMapping("/register")
     public User registerUser(@RequestBody @Valid User user){
-        return  userService.registerUser(user, Roles.user.toString());
+        return  userService.registerUser(user, Roles.ROLE_USER.toString());
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody User user) {
         String response = userService.verifyUser(user);
         return !Objects.equals(response, "fail") ? ResponseEntity.ok(response) : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @PostMapping("/deactivate")
+    public ResponseEntity<?> deactivateUser(@AuthenticationPrincipal MyUserDetails userDetails) {
+        userService.deactivateUser(userDetails.getUser());
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,6 +1,7 @@
 package com.example.YAPO.controlers.plant;
 
 import com.example.YAPO.models.*;
+import com.example.YAPO.models.User.MyUserDetails;
 import com.example.YAPO.models.plant.Plant;
 import com.example.YAPO.service.PlantService;
 import jakarta.validation.Valid;

@@ -1,13 +1,13 @@
 package com.example.YAPO.service;
 
 import com.example.YAPO.models.UpdateField;
-import com.example.YAPO.models.User;
+import com.example.YAPO.models.User.User;
 import com.example.YAPO.models.enums.ErrorList;
 import com.example.YAPO.models.plant.Comment;
 import com.example.YAPO.models.plant.Plant;
 import com.example.YAPO.repositories.CommentRepo;
 import com.example.YAPO.repositories.PlantRepo;
-import com.example.YAPO.repositories.UserRepo;
+import com.example.YAPO.repositories.user.UserRepo;
 import com.example.YAPO.utility.ValueConverter;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
