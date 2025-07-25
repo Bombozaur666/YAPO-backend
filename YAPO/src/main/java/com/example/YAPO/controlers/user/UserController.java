@@ -1,7 +1,9 @@
 package com.example.YAPO.controlers.user;
 
 import com.example.YAPO.models.User.MyUserDetails;
+import com.example.YAPO.models.User.PasswordField;
 import com.example.YAPO.models.User.User;
+import com.example.YAPO.models.User.UsernameField;
 import com.example.YAPO.models.enums.Roles;
 import com.example.YAPO.service.user.UserService;
 import jakarta.validation.Valid;
@@ -45,26 +47,25 @@ public class UserController {
     }
 
     @GetMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestBody @Valid User user) {
-        userService.forgotPassword(user);
+    public ResponseEntity<?> forgotPassword(@RequestBody String username) {
+        userService.forgotPassword(username);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/reactivate-user")
-    public ResponseEntity<?> restoreUser(@RequestBody User user){
-        userService.reactivateUser(user);
+    public ResponseEntity<?> restoreUser(@RequestBody UsernameField usernameField){
+        userService.reactivateUser(usernameField.getUsername());
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/confirm")
-    @PostMapping("/restore")
+    @PostMapping({"/restore", "/confirm"})
     public ResponseEntity<?> enableUser(@RequestParam String token ){
         userService.enableUser(token);
         return ResponseEntity.ok().build();
     }
     @PostMapping("/reset")
-    public ResponseEntity<?> resetUserPassword(@RequestParam String token , @RequestBody User user){
-        userService.resetUserPassword(token, user);
+    public ResponseEntity<?> resetUserPassword(@RequestParam String token , @RequestBody @Valid PasswordField  passwordField){
+        userService.resetUserPassword(token, passwordField);
         return ResponseEntity.ok().build();
     }
 }
