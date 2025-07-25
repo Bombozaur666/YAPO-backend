@@ -90,10 +90,6 @@ public class UserService {
         return "fail";
     }
 
-    public User getUserByUsername(String name) {
-        return userRepo.findByUsername(name);
-    }
-
     @Transactional
     public void deactivateUser(User user) {
         user.setEnabled(false);
@@ -117,14 +113,35 @@ public class UserService {
         }
     }
 
-    public void reactivateUser(@Valid User user) {
+    public void reactivateUser(User user) {
+        User _user = userRepo.findByUsername(user.getUsername());
+        if (_user == null) {throw new RuntimeException(ErrorList.USER_NOT_FOUND.toString());}
 
+        String token = UUID.randomUUID().toString();
+        VerificationToken verificationToken = new VerificationToken();
+        verificationToken.setToken(token);
+        verificationToken.setUser(_user);
+        verificationToken.setExpiryDate(LocalDateTime.now().plusDays(1));
+        try {
+            verificationTokenRepo.save(verificationToken);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(ErrorList.USERNAME_OR_EMAIL_ALREADY_IN_USE.toString());
+        }
+
+        String link = "http://localhost:8080/user/?token=" + token;
+
+        try {
+            emailService.sendConfirmationEmail(user.getEmail(), "Account Reactivation", link);
+        } catch (MessagingException e) {
+            throw new RuntimeException(ErrorList.ERROR_DURING_SENDING_MAIL.toString());
+        }
     }
 
     public void forgotPassword(@Valid User user) {
     }
 
-    public void confirmUser(String token) {
+    @Transactional
+    public void enableUser(String token) {
         Optional<VerificationToken> optional = verificationTokenRepo.findByToken(token);
         if(optional.isEmpty()){ throw new RuntimeException(ErrorList.INVALID_TOKEN.toString()); }
 
@@ -147,6 +164,28 @@ public class UserService {
             verificationTokenRepo.delete(verificationToken);
         } catch (DataIntegrityViolationException e) {
             throw new DataIntegrityViolationException(ErrorList.UNEXPECTED_ERROR_DURING_DELETE.toString());
+        }
+    }
+
+    @Transactional
+    public void resetUserPassword(String token, User user) {
+        Optional<VerificationToken> optional = verificationTokenRepo.findByToken(token);
+        if(optional.isEmpty()){ throw new RuntimeException(ErrorList.INVALID_TOKEN.toString()); }
+
+        VerificationToken verificationToken =optional.get();
+        if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException(ErrorList.TOKEN_EXPIRED.toString());
+        }
+
+        User _user = verificationToken.getUser();
+        _user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        try {
+            userRepo.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(ErrorList.ERROR_DURING_DATABASE_SAVING.toString());
+        } catch (ValidationException e) {
+            throw new ValidationException(ErrorList.VALIDATION_ERROR.toString());
         }
     }
 }

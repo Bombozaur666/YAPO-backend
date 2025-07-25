@@ -51,14 +51,20 @@ public class UserController {
     }
 
     @PostMapping("/reactivate-user")
-    public ResponseEntity<?> restoreUser(@RequestBody @Valid User user){
+    public ResponseEntity<?> restoreUser(@RequestBody User user){
         userService.reactivateUser(user);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/confirm")
-    public ResponseEntity<?> confirmUser(@RequestParam String token ){
-        userService.confirmUser(token);
+    @PostMapping("/restore")
+    public ResponseEntity<?> enableUser(@RequestParam String token ){
+        userService.enableUser(token);
+        return ResponseEntity.ok().build();
+    }
+    @PostMapping("/reset")
+    public ResponseEntity<?> resetUserPassword(@RequestParam String token , @RequestBody User user){
+        userService.resetUserPassword(token, user);
         return ResponseEntity.ok().build();
     }
 }
