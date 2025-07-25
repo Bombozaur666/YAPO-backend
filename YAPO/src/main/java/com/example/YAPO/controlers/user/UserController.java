@@ -47,9 +47,9 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestBody String username) {
-        userService.forgotPassword(username);
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody @Valid UsernameField username) {
+        userService.forgotPassword(username.getUsername());
         return ResponseEntity.ok().build();
     }
 
