@@ -55,4 +55,10 @@ public class UserController {
         userService.reactivateUser(user);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/confirm")
+    public ResponseEntity<?> confirmUser(@RequestParam String token ){
+        userService.confirmUser(token);
+        return ResponseEntity.ok().build();
+    }
 }

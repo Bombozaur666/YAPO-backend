@@ -2,29 +2,22 @@ package com.example.YAPO.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
-public class emailService {
+public class EmailService {
     private final JavaMailSender mailSender;
     @Value("${spring.mail.username}")
     private String mailFrom;
 
-    public emailService(JavaMailSender mailSender) {
+    public EmailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
-    }
-
-    public void sendSimpleEmail(String to, String subject, String body) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(mailFrom);
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(body);
-        mailSender.send(message);
     }
 
     public void sendHtmlEmail(String to, String subject, String htmlBody) throws MessagingException {
@@ -37,5 +30,10 @@ public class emailService {
         helper.setText(htmlBody, true);
 
         mailSender.send(mimeMessage);
+    }
+
+    public void sendConfirmationEmail(@Email @NotNull @NotBlank String email, String subject, String link) throws MessagingException {
+        String htmlTemplate = link;
+        sendHtmlEmail(email, subject, htmlTemplate);
     }
 }

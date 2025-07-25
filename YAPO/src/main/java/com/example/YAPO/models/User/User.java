@@ -61,5 +61,5 @@ public class User {
 
     @Column()
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private boolean enabled = true;
+    private boolean enabled = false;
 }
