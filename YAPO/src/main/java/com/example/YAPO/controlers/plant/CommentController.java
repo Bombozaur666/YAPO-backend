@@ -3,7 +3,7 @@ package com.example.YAPO.controlers.plant;
 import com.example.YAPO.models.User.MyUserDetails;
 import com.example.YAPO.models.UpdateField;
 import com.example.YAPO.models.plant.Comment;
-import com.example.YAPO.service.CommentService;
+import com.example.YAPO.service.plant.CommentService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;

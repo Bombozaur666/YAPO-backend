@@ -43,4 +43,16 @@ public class UserController {
         userService.deactivateUser(userDetails.getUser());
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody @Valid User user) {
+        userService.forgotPassword(user);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/reactivate-user")
+    public ResponseEntity<?> restoreUser(@RequestBody @Valid User user){
+        userService.reactivateUser(user);
+        return ResponseEntity.ok().build();
+    }
 }

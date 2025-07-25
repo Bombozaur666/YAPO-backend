@@ -28,6 +28,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation("org.springframework.boot:spring-boot-starter-validation:3.5.3") //Spring validation
+	implementation 'org.springframework.boot:spring-boot-starter-mail'              //Spring Mailing
 	implementation("io.jsonwebtoken:jjwt-api:0.12.6") //JWT api
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")   //JWT implementation
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")//JWT JSON parsing

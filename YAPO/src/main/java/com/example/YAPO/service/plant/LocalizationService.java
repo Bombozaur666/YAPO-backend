@@ -1,4 +1,4 @@
-package com.example.YAPO.service;
+package com.example.YAPO.service.plant;
 
 import com.example.YAPO.models.UpdateField;
 import com.example.YAPO.models.enums.ErrorList;

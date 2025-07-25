@@ -1,4 +1,4 @@
-package com.example.YAPO.service;
+package com.example.YAPO.service.plant;
 
 import com.example.YAPO.models.*;
 import com.example.YAPO.models.User.User;

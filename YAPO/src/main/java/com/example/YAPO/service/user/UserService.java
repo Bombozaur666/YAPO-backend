@@ -5,6 +5,7 @@ import com.example.YAPO.repositories.user.RoleRepo;
 import com.example.YAPO.repositories.user.UserRepo;
 import com.example.YAPO.models.User.User;
 import com.example.YAPO.service.JWTService;
+import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,7 +38,7 @@ public class UserService {
             user = userRepo.save(user);
         }
         catch (DataIntegrityViolationException e) {
-            throw new ValidationException(ErrorList.USERNAME_OR_EMAIL_ALREADY_IN_USE.toString());
+            throw new DataIntegrityViolationException(ErrorList.USERNAME_OR_EMAIL_ALREADY_IN_USE.toString());
         } catch (ValidationException e) {
             throw new ValidationException(ErrorList.VALIDATION_ERROR.toString());
         }
@@ -80,5 +81,12 @@ public class UserService {
         } catch (DataIntegrityViolationException | ValidationException e) {
             throw new RuntimeException(ErrorList.ERROR_DURING_DATABASE_SAVING.toString());
         }
+    }
+
+    public void reactivateUser(@Valid User user) {
+
+    }
+
+    public void forgotPassword(@Valid User user) {
     }
 }
